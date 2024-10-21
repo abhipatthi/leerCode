@@ -1,0 +1,45 @@
+def validate_workflow_sequence(command_sequence):
+    """
+    Validates if the given command sequence has properly matched and nested commands.
+    Args:
+    command_sequence (str): A string containing command symbols, like brackets [], {}, () representing 
+                            workflow commands.
+    Returns:
+    bool: True if the command sequence is valid, False otherwise.
+    """
+
+    # Dictionary to map opening commands to their corresponding closing commands
+    command_pairs = {')': '(', '}': '{', ']': '['}
+    
+    # Stack to keep track of the currently open commands
+    stack = []
+
+    # Traverse each command in the sequence
+    for command in command_sequence:
+        # If the command is a closing one, check if it matches the last open command
+        if command in command_pairs:
+            # Pop the top of the stack if there's a match, otherwise set unmatched to a dummy value
+            top_command = stack.pop() if stack else '#'
+            if command_pairs[command] != top_command:
+                return False  # Invalid workflow command sequence
+        else:
+            # If it's an opening command, push it onto the stack
+            stack.append(command)
+
+    # The workflow is valid if no unmatched commands remain
+    return not stack
+
+if __name__ == "__main__":
+    # Example 1: Valid workflow sequence
+    sequence1 = "{[()]}"  # Expected output: True (valid sequence)
+    
+    # Example 2: Invalid workflow sequence
+    sequence2 = "{[(])}"  # Expected output: False (invalid sequence)
+    
+    # Run the validator
+    result1 = validate_workflow_sequence(sequence1)
+    result2 = validate_workflow_sequence(sequence2)
+    
+    # Output results
+    print(f"Sequence 1 is valid: {result1}")
+    print(f"Sequence 2 is valid: {result2}")
